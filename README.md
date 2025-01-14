@@ -30,7 +30,7 @@ TailFig is a Figma plugin that instantly generates a complete design system base
 
 ## License
 
-MIT License - feel free to use this in your projects
+[MIT License](LICENSE)
 
 ---
 
