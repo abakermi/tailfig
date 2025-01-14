@@ -1,0 +1,14 @@
+{
+  "name": "TailFig",
+  "id": "1461042756567896808",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "capabilities": [],
+  "documentAccess": "dynamic-page",
+  "enableProposedApi": false,
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": ["none"]
+  }
+}

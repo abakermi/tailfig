@@ -1,0 +1,191 @@
+<style>
+    body {
+        font-family: Inter, sans-serif;
+        padding: 24px;
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    select,
+    .checkbox-group {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    select {
+        padding: 8px 12px;
+        border-radius: 4px;
+        border: 1px solid #e2e8f0;
+        height: 36px;
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 4px 0;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        margin: 0;
+    }
+
+    .container-select {
+        display: none;
+        margin-top: -12px;
+        margin-bottom: 24px;
+    }
+
+    .container-select.show {
+        display: block;
+    }
+
+    button {
+        background: #0284c7;
+        color: white;
+        border: none;
+        padding: 12px 16px;
+        border-radius: 4px;
+        width: 100%;
+        cursor: pointer;
+        height: 40px;
+        font-size: 14px;
+    }
+
+    button:hover {
+        background: #0369a1;
+    }
+
+    button:disabled {
+        background: #94a3b8;
+        cursor: not-allowed;
+    }
+</style>
+
+<select id="fontSelect">
+    <option value="">Loading fonts...</option>
+</select>
+
+<div class="checkbox-group">
+    <input type="checkbox" id="generateStyles" checked>
+    <label for="generateStyles">Generate Text Styles</label>
+</div>
+
+<div class="checkbox-group">
+    <input type="checkbox" id="generateContainer">
+    <label for="generateContainer">Generate Container Frame</label>
+</div>
+
+<div class="checkbox-group" style="margin-left: 28px;">
+    <input type="checkbox" id="addGrid">
+    <label for="addGrid">Add 12-Column Grid</label>
+</div>
+
+<div class="checkbox-group">
+    <input type="checkbox" id="generateShadows">
+    <label for="generateShadows">Generate Shadow Styles</label>
+</div>
+
+<div class="checkbox-group">
+    <input type="checkbox" id="generateColors">
+    <label for="generateColors">Generate Color Styles</label>
+</div>
+
+<div class="checkbox-group">
+    <input type="checkbox" id="generateSpacing">
+    <label for="generateSpacing">Generate Spacing Styles</label>
+</div>
+
+<div class="checkbox-group">
+    <input type="checkbox" id="generateRadius">
+    <label for="generateRadius">Generate Border Radius Styles</label>
+</div>
+
+<div class="checkbox-group">
+    <input type="checkbox" id="generateBlur">
+    <label for="generateBlur">Generate Blur Effects</label>
+</div>
+
+<div class="checkbox-group">
+    <input type="checkbox" id="generateGradients">
+    <label for="generateGradients">Generate Color Gradients</label>
+</div>
+
+<select id="containerSelect" class="container-select">
+    <option value="none">None - width: 100%</option>
+    <option value="sm">sm - max-width: 640px</option>
+    <option value="md">md - max-width: 768px</option>
+    <option value="lg">lg - max-width: 1024px</option>
+    <option value="xl">xl - max-width: 1280px</option>
+    <option value="2xl">2xl - max-width: 1536px</option>
+</select>
+
+<button id="generate" disabled>Generate</button>
+
+<script>
+    const select = document.getElementById('fontSelect');
+    const generateBtn = document.getElementById('generate');
+    const generateStyles = document.getElementById('generateStyles');
+    const generateContainer = document.getElementById('generateContainer');
+    const containerSelect = document.getElementById('containerSelect');
+    const addGrid = document.getElementById('addGrid');
+
+    // Show/hide container select based on checkbox
+    generateContainer.onchange = () => {
+        containerSelect.classList.toggle('show', generateContainer.checked);
+        addGrid.parentElement.style.display = generateContainer.checked ? 'flex' : 'none';
+        if (!generateContainer.checked) addGrid.checked = false;
+    };
+
+    // Initially hide grid option
+    addGrid.parentElement.style.display = 'none';
+
+    // Listen for font list from the plugin
+    onmessage = event => {
+        const msg = event.data.pluginMessage;
+        if (msg.type === 'update-fonts') {
+            // Clear loading option
+            select.innerHTML = '';
+
+            // Add fonts to select
+            msg.fonts.sort().forEach(font => {
+                const option = document.createElement('option');
+                option.value = font;
+                option.textContent = font;
+                // Set selected if it's Inter
+                if (font === 'Inter') {
+                    option.selected = true;
+                }
+                select.appendChild(option);
+            });
+
+            // If Inter wasn't found, select first option
+            if (!Array.from(select.options).some(opt => opt.value === 'Inter')) {
+                select.selectedIndex = 0;
+            }
+
+            // Enable generate button
+            generateBtn.disabled = false;
+        }
+    };
+
+    generateBtn.onclick = () => {
+        const data = {
+            type: 'generate',
+            font: document.getElementById('fontSelect').value,
+            generateStyles: document.getElementById('generateStyles').checked,
+            generateShadows: document.getElementById('generateShadows').checked,
+            generateColors: document.getElementById('generateColors').checked,
+            generateContainer: document.getElementById('generateContainer').checked,
+            generateSpacing: document.getElementById('generateSpacing').checked,
+            generateRadius: document.getElementById('generateRadius').checked,
+            generateBlur: document.getElementById('generateBlur').checked,
+            generateGradients: document.getElementById('generateGradients').checked,
+            addGrid: document.getElementById('addGrid').checked,
+            containerSize: document.getElementById('containerSelect').value
+        };
+        parent.postMessage({ pluginMessage: data }, '*');
+    };
+</script>
