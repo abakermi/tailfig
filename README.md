@@ -1,7 +1,5 @@
 # TailFig
 
-<img src="./resources/logo.png" alt="TailFig" width="50"/>
-
 > Tailwind to Figma, in a click
 
 TailFig is a Figma plugin that instantly generates a complete design system based on Tailwind CSS utilities. Bridge the gap between design and development with perfectly matched styles.
